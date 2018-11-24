@@ -2,8 +2,8 @@ FROM bamos/openface
 
 WORKDIR /app
 
-ADD requirements.txt .
-
-RUN pip install -r requirements.txt
+RUN pip install "tornado<5"
 
 ADD . .
+
+CMD python app.py
