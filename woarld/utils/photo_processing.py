@@ -45,7 +45,9 @@ class ImageProcessor(object):
 
     def grayscale_and_binarize(self, image):
         image = image.convert('L')
-        return self.threshold(np.asarray(image))
+        array = np.asarray(image)
+        threshold = self.threshold(array)
+        return np.invert(threshold)
 
     @staticmethod
     def threshold(image):

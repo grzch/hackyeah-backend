@@ -106,9 +106,11 @@ venv.bak/
 .idea/
 
 processed_test.jpg
-*.ipynb
 
 processed_*.jpg
 
 credentials.json
 resources/
+
+# syntetic samples
+data/syntetic/*
