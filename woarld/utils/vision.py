@@ -19,14 +19,22 @@ class Vision:
     def __init__(self):
         self.image_path = None
         self.client = vision.ImageAnnotatorClient()
+
+
+class MathVision(Vision):
+    def __init__(self):
+        super().__init__()
         self.text = None
         self.definitions = []
 
-    def get_definitions(self, file_name):
-        self.image_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        # Loads the image into memory
-        with io.open(self.image_path, 'rb') as image_file:
-            content = image_file.read()
+    def get_definitions(self, image=None, file_name=None):
+        if file_name:
+            self.image_path = os.path.join(settings.MEDIA_ROOT, file_name)
+            # Loads the image into memory
+            with io.open(self.image_path, 'rb') as image_file:
+                content = image_file.read()
+        else:
+            content = image.read()
 
         image = types.Image(content=content)
         response = self.client.document_text_detection(image=image)
@@ -36,6 +44,7 @@ class Vision:
 
     def parse_text(self):
         lines = self.text.splitlines()
+        # lines = ['D', 'AB= 7', 'BC -5', 'AD=4', 'DA=4', 'D=9', 'h=10', 'HBF = ?']
         for line in lines:
             self.parse_definition(line)
 
@@ -62,6 +71,6 @@ class Vision:
             'vertices': list(key),
             'value': value,
             'label': key,
-            'full_text': f'{key}={value}',
+            'full_text': f'{key} = {value}',
             'is_angle': len(key) == 3
         }

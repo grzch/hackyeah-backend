@@ -3,3 +3,4 @@ Pillow
 numpy
 scikit-image
 google-cloud-vision
+djangorestframework
