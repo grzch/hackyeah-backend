@@ -15,6 +15,7 @@ class Face2VecHandler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Origin", "*")
 
     def post(self):
+        print('asd' * 10, self.request.files, self.request)
         img_bytes = self.request.files['photo'][0]['body']
         img = bytes_to_img(img_bytes)
         try:
