@@ -37,9 +37,9 @@ class Vision:
     def parse_text(self):
         lines = self.text.splitlines()
         for line in lines:
-            self.prettify_definition(line)
+            self.parse_definition(line)
 
-    def prettify_definition(self, text):
+    def parse_definition(self, text):
         text = text.replace(' ', '')
         matches = re.findall(DEFINITION_REGEX, text)
         if matches:
@@ -52,5 +52,16 @@ class Vision:
                             or (len(key) == 2 and value == QUESTION_SIGN):
                         key += 'C'
 
-                    text = f'{key}={value}'
-                    self.definitions.append(text)
+                    self.definitions.append(
+                        self.process_data(key, value)
+                    )
+
+    @staticmethod
+    def process_data(key, value):
+        return {
+            'vertices': list(key),
+            'value': value,
+            'label': key,
+            'full_text': f'{key}={value}',
+            'is_angle': len(key) == 3
+        }
