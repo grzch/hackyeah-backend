@@ -107,3 +107,5 @@ venv.bak/
 
 processed_test.jpg
 *.ipynb
+
+credentials.json
