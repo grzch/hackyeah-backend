@@ -107,3 +107,6 @@ venv.bak/
 
 processed_test.jpg
 *.ipynb
+
+processed_test_block.jpg
+processed_test_parameters.jpg
