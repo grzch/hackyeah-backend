@@ -9,6 +9,8 @@ from utils.math import Plane, PRISM
 from utils.photo_processing import ImageProcessor
 from utils.vision import MathVision
 
+from utils.faces_library import faces_library
+
 
 class Detect(GenericAPIView):
     serializer_class = ImageUploadSerializer
@@ -82,25 +84,13 @@ class Historical(GenericAPIView):
         serializer = ImageUploadSerializer(data=self.request.data)
         serializer.is_valid()
         image = serializer.validated_data['image']
+
         # DO SOMETHING WITH IMAGE
+        person = faces_library.get_person(image)
 
         # CASE WITH NO PERSON
-        person_not_found = True
-        if person_not_found:
+        if person is None:
             return Response(status=204)
 
-        person = self.get_person_from_database(name="Emilia Plater")
+        # OK
         return Response(person)
-
-    def get_person_from_database(self, name):
-        data_filename = 'scraped_people/database.json'
-        with open(data_filename) as f:
-            people = json.load(f)
-
-        # MOCKED NAME
-        name = "Emilia Plater"
-
-        person_found = [person for person in people if person["name"] == name]
-        if person_found:
-            return person_found[0]
-        return None
