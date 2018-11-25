@@ -1,3 +1,5 @@
+import json
+
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from api.serializers import ImageUploadSerializer
@@ -37,3 +39,32 @@ class Detect(GenericAPIView):
             'type': 'prism' if is_prism > is_pyramid else 'pyramid'
         }
         return Response(response)
+
+
+class Historical(GenericAPIView):
+    def post(self, *args, **kwargs):
+        serializer = ImageUploadSerializer(data=self.request.data)
+        serializer.is_valid()
+        image = serializer.validated_data['image']
+        # DO SOMETHING WITH IMAGE
+
+        # CASE WITH NO PERSON
+        person_not_found = True
+        if person_not_found:
+            return Response(status=204)
+
+        person = self.get_person_from_database(name="Emilia Plater")
+        return Response(person)
+
+    def get_person_from_database(self, name):
+        data_filename = 'scraped_people/database.json'
+        with open(data_filename) as f:
+            people = json.load(f)
+
+        # MOCKED NAME
+        name = "Emilia Plater"
+
+        person_found = [person for person in people if person["name"] == name]
+        if person_found:
+            return person_found[0]
+        return None
