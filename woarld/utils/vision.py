@@ -56,6 +56,11 @@ class MathVision(Vision):
                 if len(match) == 2:
                     key = match[0]
                     value = match[1]
+
+                    # b instead of h
+                    if key == 'b':
+                        key = 'h'
+
                     # no C sign detected
                     if (len(key) == 1 and value.isdigit() and H_SIGN not in key.lower())\
                             or (len(key) == 2 and value == QUESTION_SIGN):
