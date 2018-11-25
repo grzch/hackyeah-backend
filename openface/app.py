@@ -9,6 +9,7 @@ from images import bytes_to_img
 # settings
 PORT = 8000
 
+
 # handlers
 class Face2VecHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
