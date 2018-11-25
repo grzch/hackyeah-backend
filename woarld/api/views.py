@@ -17,7 +17,6 @@ class Detect(GenericAPIView):
         return None
 
     def post(self, *args, **kwargs):
-        return self.get_mocked_response()
         serializer = ImageUploadSerializer(data=self.request.data)
         serializer.is_valid()
         image = serializer.validated_data['image']
@@ -56,35 +55,68 @@ class Detect(GenericAPIView):
     def get_mocked_response(self):
         mocked_object = {
             "nodes": [
-                # podstawa dolna
-                {"name": "A", "x": -5, "y": 0, "z": 0},
-                {"name": "B", "x": 5, "y": 0, "z": 0},
-                {"name": "C", "x": 2, "y": 4, "z": 0},
-                {"name": "D", "x": -2, "y": 4, "z": 0},
-                # podstawa górna
-                {"name": "E", "x": -5, "y": 0, "z": 6},
-                {"name": "F", "x": 5, "y": 0, "z": 6},
-                {"name": "G", "x": 2, "y": 4, "z": 6},
-                {"name": "H", "x": -2, "y": 4, "z": 6},
+                {
+                    "name": "A",
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                {
+                    "name": "B",
+                    "x": 20.0,
+                    "y": 0,
+                    "z": 0
+                },
+                {
+                    "name": "C",
+                    "x": 20.0,
+                    "y": 10.0,
+                    "z": 0
+                },
+                {
+                    "name": "D",
+                    "x": 0.0,
+                    "y": 10.0,
+                    "z": 0
+                },
+                {
+                    "name": "E",
+                    "x": 10.0,
+                    "y": 5.0,
+                    "z": 34.0
+                }
             ],
             "connections": [
-                # podstawa dolna
-                {"from": "A", "to": "B"},
-                {"from": "B", "to": "C"},
-                {"from": "C", "to": "D"},
-                {"from": "D", "to": "E"},
-                # podstawa górna
-                {"from": "E", "to": "F"},
-                {"from": "F", "to": "G"},
-                {"from": "G", "to": "H"},
-                {"from": "H", "to": "E"},
-                # wysokości
-                {"from": "A", "to": "E"},
-                {"from": "B", "to": "F"},
-                {"from": "C", "to": "G"},
-                {"from": "D", "to": "H"},
+                {
+                    "from": "A",
+                    "to": "B"
+                },
+                {
+                    "from": "C",
+                    "to": "E"
+                },
+                {
+                    "from": "B",
+                    "to": "E"
+                },
+                {
+                    "from": "B",
+                    "to": "C"
+                },
+                {
+                    "from": "D",
+                    "to": "E"
+                },
+                {
+                    "from": "A",
+                    "to": "E"
+                }
             ],
-            "angle": ["D", "A", "B"]
+            "angle": [
+                "E",
+                "D",
+                "B"
+            ]
         }
         return Response(mocked_object)
 
