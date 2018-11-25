@@ -1,12 +1,12 @@
 import numpy as np
 from PIL import Image
-from skimage import morphology
-from skimage.filters import threshold_adaptive
-from skimage.transform import resize
+from skimage import morphology, transform
+from skimage.filters import threshold_otsu
 
 THRESHOLD_VALUE = 200
 PARAMETERS_BEGIN_IN = 0.5
-PHOTO_WIDTH, PHOTO_HEIGHT = (592, 790)
+OFFSET = 52
+PHOTO_WIDTH, PHOTO_HEIGHT = (480, 640)
 
 PART_OF_FULL_PHOTO = 1
 
@@ -16,43 +16,35 @@ BLOCK_SIZE = (
 )
 
 
+# iphone X viewport (375, 640) vs img size: (480, 640)
+
+
 class ImageProcessor(object):
     def __init__(self, image):
-        self.raw_image = image
+        self.raw_image = Image.open(image)
 
     def get_preprocessed_block(self):
         width, height = self.raw_image.size
-        image = self.raw_image.crop((0, 0, width, self.get_line_y_position()))
-        image = self.grayscale_and_binarize(image)
-        image = resize(image, BLOCK_SIZE[::-1], anti_aliasing=True)
-        image = self.get_morphed(image)
-        return image
+        # left, upper, right, and lower pixel coordinate.
+        im = self.raw_image.crop((OFFSET, 0, width - OFFSET, self.get_line_y_position()))
 
-    @staticmethod
-    def get_morphed(image):
-        image = image.astype('uint8')
-        image = morphology.binary_erosion(image)
-        image = morphology.closing(image)
-        return image
+        im = im.convert('L')
+        im = np.asarray(im)
+        im = transform.resize(im, (150, 150))
+
+        threshold = threshold_otsu(im)
+        im = im < threshold
+        im = morphology.binary_dilation(im)
+        im = transform.resize(im, (50, 50))
+        return im
 
     def get_parameters_image(self):
         width, height = self.raw_image.size
-        return self.raw_image.crop((0, self.get_line_y_position(), width, height))
+        return self.raw_image.crop((OFFSET, self.get_line_y_position(), width - OFFSET, height))
 
     def get_line_y_position(self):
         width, height = self.raw_image.size
         return int(height * PARAMETERS_BEGIN_IN)
-
-    def grayscale_and_binarize(self, image):
-        image = image.convert('L')
-        array = np.asarray(image)
-        threshold = self.threshold(array)
-        return np.invert(threshold)
-
-    @staticmethod
-    def threshold(image):
-        block_size = 11
-        return threshold_adaptive(image, block_size, offset=10)
 
 
 if __name__ == '__main__':
