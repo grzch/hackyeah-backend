@@ -4,3 +4,4 @@ numpy
 scikit-image
 google-cloud-vision
 djangorestframework
+django-cors-headers
