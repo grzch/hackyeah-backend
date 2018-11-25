@@ -4,8 +4,8 @@ from skimage import morphology, transform
 from skimage.filters import threshold_otsu
 
 THRESHOLD_VALUE = 200
-PARAMETERS_BEGIN_IN = 0.5
-OFFSET = 52
+PARAMETERS_BEGIN_IN = 0.62
+OFFSET = 105
 PHOTO_WIDTH, PHOTO_HEIGHT = (480, 640)
 
 PART_OF_FULL_PHOTO = 1
@@ -27,7 +27,7 @@ class ImageProcessor(object):
     def get_preprocessed_block(self):
         width, height = self.raw_image.size
         # left, upper, right, and lower pixel coordinate.
-        im = self.raw_image.crop((OFFSET, 0, width - OFFSET, self.get_line_y_position()))
+        im = self.raw_image.crop((0, 0, width - OFFSET, self.get_line_y_position()))
 
         im = im.convert('L')
         im = np.asarray(im)
@@ -41,7 +41,7 @@ class ImageProcessor(object):
 
     def get_parameters_image(self):
         width, height = self.raw_image.size
-        return self.raw_image.crop((OFFSET, self.get_line_y_position(), width - OFFSET, height))
+        return self.raw_image.crop((0, self.get_line_y_position(), width - OFFSET, height - 5))
 
     def get_line_y_position(self):
         width, height = self.raw_image.size
