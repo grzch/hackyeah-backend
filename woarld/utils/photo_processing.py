@@ -22,6 +22,7 @@ BLOCK_SIZE = (
 class ImageProcessor(object):
     def __init__(self, image):
         self.raw_image = Image.open(image)
+        self.raw_image = self.raw_image.convert('RGB')
 
     def get_preprocessed_block(self):
         width, height = self.raw_image.size
