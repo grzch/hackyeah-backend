@@ -44,7 +44,6 @@ class MathVision(Vision):
 
     def parse_text(self):
         lines = self.text.splitlines()
-        # lines = ['D', 'AB= 7', 'BC -5', 'AD=4', 'DA=4', 'D=9', 'h=10', 'HBF = ?']
         for line in lines:
             self.parse_definition(line)
 
@@ -57,7 +56,7 @@ class MathVision(Vision):
                     key = match[0]
                     value = match[1]
                     # no C sign detected
-                    if (len(key) == 1 and value.isdigit() and key != H_SIGN)\
+                    if (len(key) == 1 and value.isdigit() and H_SIGN not in key.lower())\
                             or (len(key) == 2 and value == QUESTION_SIGN):
                         key += 'C'
 
@@ -67,10 +66,18 @@ class MathVision(Vision):
 
     @staticmethod
     def process_data(key, value):
+        type = None
+        if len(key) == 2:
+            type = 'S'
+        elif len(key) == 3:
+            type = 'A'
+        else:
+            type = key
+
         return {
             'vertices': list(key),
             'value': value,
             'label': key,
             'full_text': f'{key} = {value}',
-            'is_angle': len(key) == 3
+            'type': type
         }
