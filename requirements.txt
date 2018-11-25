@@ -2,6 +2,7 @@ django
 Pillow
 numpy
 scikit-image
+google-cloud-translate
 google-cloud-vision
 djangorestframework
 django-cors-headers

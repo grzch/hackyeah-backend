@@ -1,15 +1,13 @@
-import json
-
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from api.serializers import ImageUploadSerializer
 from shapes_classification.classificator import nn_model
+from utils.faces_library import faces_library
 from utils.math import Plane, PRISM, PYRAMID
 from utils.photo_processing import ImageProcessor
+from utils.photo_translator import photo_translator
 from utils.vision import MathVision
-
-from utils.faces_library import faces_library
 
 
 class Detect(GenericAPIView):
@@ -106,3 +104,15 @@ class Historical(GenericAPIView):
 
         # OK
         return Response(person)
+
+
+class Translate(GenericAPIView):
+    def post(self, *args, **kwargs):
+        serializer = ImageUploadSerializer(data=self.request.data)
+        serializer.is_valid()
+        image = serializer.validated_data['image']
+
+        labels = photo_translator.label_image(image)
+        translations = photo_translator.translate_labels(labels)
+
+        return Response(translations)
