@@ -34,8 +34,9 @@ class MathVision(Vision):
             with io.open(self.image_path, 'rb') as image_file:
                 content = image_file.read()
         else:
-            content = image.read()
-
+            imgByteArr = io.BytesIO()
+            image.save(imgByteArr, format='jpeg')
+            content = imgByteArr.getvalue()
         image = types.Image(content=content)
         response = self.client.document_text_detection(image=image)
         self.text = response.full_text_annotation.text

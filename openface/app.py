@@ -9,12 +9,14 @@ from images import bytes_to_img
 # settings
 PORT = 8000
 
+
 # handlers
 class Face2VecHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
 
     def post(self):
+        print('asd' * 10, self.request.files, self.request)
         img_bytes = self.request.files['photo'][0]['body']
         img = bytes_to_img(img_bytes)
         try:
