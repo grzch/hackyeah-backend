@@ -32,4 +32,8 @@ class Detect(GenericAPIView):
         vision = MathVision()
         definitions = vision.get_definitions(params_img)
         plane = Plane(PRISM, definitions)
-        return Response(definitions)
+        response = {
+            'vertices': definitions,
+            'type': 'prism' if is_prism > is_pyramid else 'pyramid'
+        }
+        return Response(response)
