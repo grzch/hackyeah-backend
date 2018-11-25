@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from api.serializers import ImageUploadSerializer
 from shapes_classification.classificator import nn_model
-from utils.math import Plane, PRISM
+from utils.math import Plane, PRISM, PYRAMID
 from utils.photo_processing import ImageProcessor
 from utils.vision import MathVision
 
@@ -37,10 +37,21 @@ class Detect(GenericAPIView):
 
         vision = MathVision()
         definitions = vision.get_definitions(params_img)
-        plane = Plane(PRISM, definitions)
+        block_type = PRISM if is_prism > is_pyramid else PYRAMID
+        plane = Plane(block_type, definitions)
+
+        nodes = []
+        for label, v in plane.vertices.items():
+            nodes.append({
+                'name': label,
+                'x': v.x,
+                'y': v.y,
+                'z': v.z,
+            })
         response = {
-            'vertices': definitions,
-            'type': 'prism' if is_prism > is_pyramid else 'pyramid'
+            'nodes': nodes,
+            'connections': plane.parsed_connections,
+            'angle': plane.angle_to_find
         }
         return Response(response)
 
@@ -74,7 +85,8 @@ class Detect(GenericAPIView):
                 {"from": "B", "to": "F"},
                 {"from": "C", "to": "G"},
                 {"from": "D", "to": "H"},
-            ]
+            ],
+            "angle": ["D", "A", "B"]
         }
         return Response(mocked_object)
 

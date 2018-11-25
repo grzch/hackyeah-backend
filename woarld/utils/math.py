@@ -64,6 +64,7 @@ class Plane:
         self.definitions = definitions
         self.height = 0
         self.angle = 90
+        self.angle_to_find = None
         self.vertices = {}
         self.connections = set()
         self.parsed_connections = []
@@ -78,10 +79,12 @@ class Plane:
         self.calculate_coordinates()
 
     def find_data(self):
+        print(self.definitions)
         sections = list(filter(lambda x: x['type'] == 'S', self.definitions))
         angles = list(filter(lambda x: x['type'] == 'A', self.definitions))
-        self.angle = float(list(filter(lambda x: x['value'] != '?', self.definitions))[0]['value'])
+        # self.angle = float(list(filter(lambda x: x['value'] != '?', self.definitions))[0]['value'])
         self.height = float(int(list(filter(lambda x: x['type'] == 'h', self.definitions))[0]['value']))
+        self.angle_to_find = list(filter(lambda x: x['value'] == '?', self.definitions))[0]['vertices']
 
         if len(sections) == 1:
             ab = list(filter(lambda x: x['label'] == 'AB', sections))[0]['value']
@@ -169,10 +172,16 @@ class Plane:
         dy = cy
         self.vertices.get('D').set(dx, dy, 0)
 
-        for v in ['A', 'B', 'C', 'D']:
-            v_prim = self.get_top_vertex_equivalent(v)
-            vertex = self.vertices.get(v)
-            self.vertices.get(v_prim).set(vertex.x, vertex.y, vertex.z + h)
+        if self.block_type == PRISM:
+            for v in ['A', 'B', 'C', 'D']:
+                v_prim = self.get_top_vertex_equivalent(v)
+                vertex = self.vertices.get(v)
+                self.vertices.get(v_prim).set(vertex.x, vertex.y, vertex.z + self.height)
+        else:
+            x = [p.x for p in self.vertices.values()][:4]
+            y = [p.y for p in self.vertices.values()][:4]
+            centroid = (sum(x) / (len(self.vertices) - 1), sum(y) / (len(self.vertices) - 1))
+            self.vertices.get('E').set(centroid[0], centroid[1], self.height)
 
     @staticmethod
     def rotate(origin, point, angle):
