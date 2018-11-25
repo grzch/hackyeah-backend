@@ -20,8 +20,11 @@ class Detect(GenericAPIView):
         processor = ImageProcessor(image)
         block_img = processor.get_preprocessed_block()
         params_img = processor.get_parameters_image()
+        import scipy.misc
+        scipy.misc.imsave('block.jpg', block_img)
+        scipy.misc.imsave('params.jpg', params_img)
 
         vision = MathVision()
-        definitions = vision.get_definitions(image)
+        definitions = vision.get_definitions(params_img)
         plane = Plane(PRISM, definitions)
         return Response(definitions)
